@@ -5,6 +5,7 @@ public class PlayerController : BaseController
     [SerializeField] bool _hasInput, _hasJumped, _onGround, _onSlope;
     public bool HasInput => _hasInput;
     public bool OnGround => _onGround;
+    public bool HasJumped => _hasJumped;
 
     [SerializeField] PlayerStateFactory _state;
     public PlayerStateFactory State => _state;
@@ -57,7 +58,6 @@ public class PlayerController : BaseController
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SetJump(true);
-            SetState(_state._jumpState);
         }
         else
         {
@@ -78,7 +78,6 @@ public class PlayerController : BaseController
     {
         if (!OnGround)
         {
-            SetState(State._fallState);
             _rb.AddForce(transform.up * -Physics.gravity.magnitude * _gravityScale ,ForceMode.Acceleration);
         }
     }

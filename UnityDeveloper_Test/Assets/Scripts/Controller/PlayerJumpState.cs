@@ -5,6 +5,7 @@ using UnityEngine.TextCore.Text;
 public class PlayerJumpState : BaseState<PlayerController>
 {
     [SerializeField] float jumpStrength = 4.5f;
+    bool hasJumped;
     public PlayerJumpState(PlayerController m_Controller) : base(m_Controller)
     {
     }
@@ -14,6 +15,7 @@ public class PlayerJumpState : BaseState<PlayerController>
         base.EnterState();
         if(_controller.OnGround)
         {
+            hasJumped = true;
             Jump();
         }
         Debug.Log("Enter Jump State");
@@ -35,8 +37,8 @@ public class PlayerJumpState : BaseState<PlayerController>
 
     public override void Update()
     {
-        base.Update();
         SwitchState();
+        base.Update();
     }
 
 
@@ -48,6 +50,9 @@ public class PlayerJumpState : BaseState<PlayerController>
 
     void SwitchState()
     {
-       // _controller.SetState(_controller.State._fallState);
+        if(!_controller.OnGround)
+        {
+            _controller.SetState(_controller.State._fallState);
+        }
     }
 }

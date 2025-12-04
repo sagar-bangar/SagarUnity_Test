@@ -15,6 +15,11 @@ public class PlayerMoveState : BaseState<PlayerController>
     {
     }
 
+    public void SetController(PlayerController m_Controller)
+    {
+        _controller = m_Controller;
+    }
+
     public override void EnterState()
     {
         base.EnterState();
@@ -74,11 +79,15 @@ public class PlayerMoveState : BaseState<PlayerController>
             {
                 _controller.SetState(_controller.State._idleState);
             }
+            else if(_controller.HasJumped)
+            {
+                _controller.SetState(_controller.State._jumpState);
+            }
         }
-        /*else
+        else
         {
             _controller.SetState(_controller.State._fallState);
-        }*/
+        }
     }
 
     public async void BlendMovementAsync()

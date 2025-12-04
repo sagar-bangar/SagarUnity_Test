@@ -59,11 +59,15 @@ public class PlayerIdleState : BaseState<PlayerController>
             {
                 _controller.SetState(_controller.State._moveState);
             }
+            else if(_controller.HasJumped)
+            {
+                _controller.SetState(_controller.State._jumpState);
+            }
         }
-        /*else
+        else
         {
             _controller.SetState(_controller.State._fallState);
-        }*/
+        }
     }
 
     public override void ExitState()
