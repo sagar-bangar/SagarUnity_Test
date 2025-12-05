@@ -37,6 +37,10 @@ public class PlayerController : BaseController
     [SerializeField] Vector3 _lastMoveDir;
     public Vector3 LastMoveDir { get { return _lastMoveDir; } set { _lastMoveDir = value; } }
 
+    public Transform roataitonPiviot;
+    public RaycastHit leftRayCast, rightRayCast, forwardRayCast, backRayCast;
+
+
     private void Awake()
     {
         _state = new PlayerStateFactory(this);
@@ -53,6 +57,11 @@ public class PlayerController : BaseController
         else
         {
             SetInput(false);
+        }
+
+        if(Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            SetState(State._switchGravityState);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -72,6 +81,7 @@ public class PlayerController : BaseController
         SetGroundedStatus();
         SetSlopeStatus();
         OnFixedUpdateState();
+
     }
 
     void ApplyGravity()
@@ -84,7 +94,7 @@ public class PlayerController : BaseController
 
     void SetGroundedStatus()
     {
-        if (Physics.SphereCast(transform.position + (Vector3.up * _spherCastStart), _capsuleCollider.radius * _sphereRadiusScale, -transform.up, out _sphereCastHit, _sphereCastDistance, _groundMask))
+        if (Physics.SphereCast(transform.position + (transform.up * _spherCastStart), _capsuleCollider.radius * _sphereRadiusScale, -transform.up, out _sphereCastHit, _sphereCastDistance, _groundMask))
         {
             _onGround = true;
         }
@@ -96,18 +106,21 @@ public class PlayerController : BaseController
 
     void SetSlopeStatus()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out _planeBeneathHit, _planeCheckRayDistance, _groundMask))
+        if (Physics.Raycast(transform.position, -transform.up, out _planeBeneathHit, _planeCheckRayDistance, _groundMask))
         {
-            if (_planeBeneathHit.normal == Vector3.up)
-            {
-                _onSlope = true;
-            }
-            else
+            if (_planeBeneathHit.normal == transform.up)
             {
                 _onSlope = false;
             }
+            else
+            {
+                _onSlope = true;
+            }
         }
     }
+
+
+
 
     void SetInput(bool m_hasInput)
     {
@@ -119,26 +132,16 @@ public class PlayerController : BaseController
         _hasJumped = m_hasJump;
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
-        if (_capsuleCollider == null) return;
+        if (_planeBeneathHit.collider != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(_planeBeneathHit.point, _planeBeneathHit.normal);
 
-        Gizmos.color = Color.red;
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(transform.position, (transform.position + MoveDir));
+        }
 
-        float radius = _capsuleCollider.radius * _sphereRadiusScale;
-
-        Vector3 start = transform.position + (Vector3.up * _spherCastStart);
-        Vector3 end = start + (-transform.up * _sphereCastDistance);
-
-        Gizmos.DrawWireSphere(start, radius);
-
-        Gizmos.color = Color.white;
-        Gizmos.DrawWireSphere(end, radius);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(start, end);
-
-        Gizmos.color = Color.black;
-        Gizmos.DrawLine(transform.position, transform.position + (Vector3.down * _planeCheckRayDistance));
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 [System.Serializable]
 public class PlayerMoveState : BaseState<PlayerController>
 {
     [SerializeField] float _blendTime = 0.2f;
     [SerializeField] float _moveSpeed = 4.5f;
-    [SerializeField] float _maxMoveSpeed = 50f;
+    [SerializeField] float _moveTimeScale = 50f;
     [SerializeField] float _roatationSpeed = 30f;
     Vector3 velocity;
     float time = 0;
@@ -55,21 +56,7 @@ public class PlayerMoveState : BaseState<PlayerController>
             }
         }
     }
-
-    private void CalculateMoveDirection()
-    {
-        float time = 0;
-        time += Time.deltaTime;
-        Vector3 targetDirection = Vector3.zero;
-        Vector3 averageDirection = Vector3.zero;
-        targetDirection = (new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))).normalized;
-        float desiredDirection = Vector3.Dot(_controller.transform.up, _controller._planeBeneathHit.normal);
-        float angle = Mathf.Acos(desiredDirection) * Mathf.Rad2Deg;
-        Vector3 rotAxis = Vector3.Cross(_controller.transform.up, _controller._planeBeneathHit.normal);
-        Quaternion rot = Quaternion.AngleAxis(angle, rotAxis);
-        targetDirection = rot * targetDirection;
-        _controller.MoveDir = targetDirection;
-    }
+  
 
     void SwitchState()
     {
@@ -116,21 +103,30 @@ public class PlayerMoveState : BaseState<PlayerController>
         Debug.Log("Exit MoveState");
     }
 
+    private void CalculateMoveDirection()
+    {
+        Vector3 surfaceNormal = _controller._planeBeneathHit.normal;
+        Vector3 newGlobaRight = Vector3.right;
+        if (Mathf.Abs(Vector3.Dot(surfaceNormal,Vector3.up)) > 0.99f)
+        {
+            newGlobaRight = -Vector3.Cross(surfaceNormal, Vector3.forward).normalized;
+        }
+        else
+        {
+            newGlobaRight = Vector3.Cross(surfaceNormal, Vector3.up).normalized;
+        }
+        Vector3 newGlobalForward = Vector3.Cross(newGlobaRight, surfaceNormal);
+        Vector3 inputVector = newGlobalForward * Input.GetAxis("Vertical") + newGlobaRight * Input.GetAxis("Horizontal");
+        _controller.MoveDir = Vector3.ProjectOnPlane(inputVector, _controller._planeBeneathHit.normal).normalized;
+    }
+
     private void CalculateSpeed()
     {
-        float accel = _maxMoveSpeed;
         Vector3 currentVel = _controller.RB.velocity;
-
         Vector3 targetVel = _controller.MoveDir * _moveSpeed;
         targetVel.y = currentVel.y;
-
-        Vector3 delta = targetVel - currentVel;
-        Vector3 accelStep = delta.normalized * accel * Time.deltaTime;
-        if (accelStep.magnitude > delta.magnitude)
-            accelStep = delta;
-
-        velocity = currentVel + accelStep;
-
+        velocity = currentVel + (_controller.MoveDir * _moveSpeed - currentVel) * Time.deltaTime * _moveTimeScale;
+        Debug.Log($"Velocity {velocity}");
     }
 
     void Move()
@@ -154,8 +150,8 @@ public class PlayerMoveState : BaseState<PlayerController>
     {
         if (_controller.MoveDir != Vector3.zero)
         {
-            Vector3 lookDirection = new Vector3(_controller.MoveDir.x, 0, _controller.MoveDir.z);
-            Quaternion rotateTowards = Quaternion.LookRotation(lookDirection, Vector3.up);
+            Vector3 lookDirection = _controller.MoveDir;
+            Quaternion rotateTowards = Quaternion.LookRotation(lookDirection, _controller.transform.up);
             _controller.transform.localRotation = Quaternion.Slerp(_controller.transform.rotation, rotateTowards, _roatationSpeed * Time.deltaTime);
         }
     }

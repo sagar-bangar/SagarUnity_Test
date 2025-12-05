@@ -32,7 +32,7 @@ public class PlayerJumpState : BaseState<PlayerController>
         vel.y = 0;
         _controller.RB.velocity = vel;
 
-        _controller.RB.AddForce(Vector3.up * jumpStrength, ForceMode.Impulse);
+        _controller.RB.AddForce(_controller.transform.up * jumpStrength, ForceMode.Impulse);
     }
 
     public override void Update()
