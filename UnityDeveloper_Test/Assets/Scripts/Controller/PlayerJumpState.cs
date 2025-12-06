@@ -54,5 +54,10 @@ public class PlayerJumpState : BaseState<PlayerController>
         {
             _controller.SetState(_controller.State._fallState);
         }
+
+        if (_controller.CurrentRotationAxis != default)
+        {
+            _controller.SetState(_controller.State._switchGravityState);
+        }
     }
 }

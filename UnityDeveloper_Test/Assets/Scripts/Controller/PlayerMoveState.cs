@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 [System.Serializable]
 public class PlayerMoveState : BaseState<PlayerController>
@@ -56,7 +55,7 @@ public class PlayerMoveState : BaseState<PlayerController>
             }
         }
     }
-  
+
 
     void SwitchState()
     {
@@ -66,7 +65,7 @@ public class PlayerMoveState : BaseState<PlayerController>
             {
                 _controller.SetState(_controller.State._idleState);
             }
-            else if(_controller.HasJumped)
+            else if (_controller.HasJumped)
             {
                 _controller.SetState(_controller.State._jumpState);
             }
@@ -74,6 +73,11 @@ public class PlayerMoveState : BaseState<PlayerController>
         else
         {
             _controller.SetState(_controller.State._fallState);
+        }
+
+        if (_controller.CurrentRotationAxis != default)
+        {
+            _controller.SetState(_controller.State._switchGravityState);
         }
     }
 
@@ -103,11 +107,26 @@ public class PlayerMoveState : BaseState<PlayerController>
         Debug.Log("Exit MoveState");
     }
 
+
     private void CalculateMoveDirection()
     {
         Vector3 surfaceNormal = _controller._planeBeneathHit.normal;
+        Transform cam = _controller._camera.transform;
+        Vector3 camForward = Vector3.ProjectOnPlane(cam.forward, surfaceNormal).normalized;
+        Vector3 camRight = Vector3.ProjectOnPlane(cam.right, surfaceNormal).normalized;
+
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 inputVector = camForward * v + camRight * h;
+        _controller.MoveDir = inputVector.normalized;
+    }
+
+    /*private void CalculateMoveDirection()
+    {
+        Vector3 surfaceNormal = _controller._planeBeneathHit.normal;
         Vector3 newGlobaRight = Vector3.right;
-        if (Mathf.Abs(Vector3.Dot(surfaceNormal,Vector3.up)) > 0.99f)
+        if (Mathf.Abs(Vector3.Dot(surfaceNormal, Vector3.up)) > 0.99f)
         {
             newGlobaRight = -Vector3.Cross(surfaceNormal, Vector3.forward).normalized;
         }
@@ -118,7 +137,7 @@ public class PlayerMoveState : BaseState<PlayerController>
         Vector3 newGlobalForward = Vector3.Cross(newGlobaRight, surfaceNormal);
         Vector3 inputVector = newGlobalForward * Input.GetAxis("Vertical") + newGlobaRight * Input.GetAxis("Horizontal");
         _controller.MoveDir = Vector3.ProjectOnPlane(inputVector, _controller._planeBeneathHit.normal).normalized;
-    }
+    }*/
 
     private void CalculateSpeed()
     {

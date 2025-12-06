@@ -35,6 +35,9 @@ public class PlayerSwitchGravityState : BaseState<PlayerController>
             case RotationAxis.Right:
                 SetRaycastIndirection(Vector3.right, _controller.rightRayCast);
                 break;
+            default:
+                SwitchState();
+            break;
         }
     }
 
@@ -63,6 +66,10 @@ public class PlayerSwitchGravityState : BaseState<PlayerController>
             Vector3 rotAxis = Vector3.Cross(currentUp, targetUp).normalized;
             Quaternion smoothed = Quaternion.Slerp(Quaternion.identity, alignRot, _rotateSpeed * Time.fixedDeltaTime);
             _controller.transform.RotateAround(_controller.roataitonPiviot.position, smoothed * rotAxis, smoothed.eulerAngles.magnitude);
+        }
+        else
+        {
+            SwitchState();
         }
     }
 

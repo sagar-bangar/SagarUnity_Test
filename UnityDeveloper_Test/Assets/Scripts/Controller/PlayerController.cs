@@ -29,20 +29,24 @@ public class PlayerController : BaseController
 
     [SerializeField] float _gravityScale;
 
+
+    [Header("Movement Paremeters")]
     public Vector3 currentVelocity, lastVelocity;
 
     [SerializeField] Vector3 _moveDir;
+    public Vector3 LastMoveDir { get; set; }
     public Vector3 MoveDir { get { return _moveDir; } set { _moveDir = value; } }
 
-    [SerializeField] Vector3 _lastMoveDir;
-    public Vector3 LastMoveDir { get { return _lastMoveDir; } set { _lastMoveDir = value; } }
 
+    [Header("GravitySwitch Parameters")]
     public Transform roataitonPiviot;
     public RaycastHit leftRayCast, rightRayCast, forwardRayCast, backRayCast;
-
     [SerializeField] RotationAxis currentRotationAxis;
     public RotationAxis CurrentRotationAxis { get => currentRotationAxis; set => currentRotationAxis = value; }
 
+    public Camera _camera;
+
+    #region MonoBehaviourCallbacks
     private void Awake()
     {
         _state = new PlayerStateFactory(this);
@@ -52,44 +56,9 @@ public class PlayerController : BaseController
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-        {
-            SetInput(true);
-        }
-        else
-        {
-            SetInput(false);
-        }
-
-        if(Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            currentRotationAxis = RotationAxis.Forward;
-            SetState(State._switchGravityState);
-        }
-        else if(Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            currentRotationAxis = RotationAxis.Backward;
-            SetState(State._switchGravityState);
-        }
-        else if( Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            currentRotationAxis = RotationAxis.Left;
-            SetState(State._switchGravityState);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            currentRotationAxis = RotationAxis.Right;
-            SetState(State._switchGravityState);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SetJump(true);
-        }
-        else
-        {
-            SetJump(false);
-        }
+        UpdateMovemementBasedOnInput();
+        UpdateRotationAxisBasedOnInput();
+        UpdateJumpBasedOnInput();
         OnUpdateState();
     }
 
@@ -99,14 +68,15 @@ public class PlayerController : BaseController
         SetGroundedStatus();
         SetSlopeStatus();
         OnFixedUpdateState();
-
     }
+    #endregion
 
+    #region PhysicCast
     void ApplyGravity()
     {
         if (!OnGround)
         {
-            _rb.AddForce(transform.up * -Physics.gravity.magnitude * _gravityScale ,ForceMode.Acceleration);
+            _rb.AddForce(transform.up * -Physics.gravity.magnitude * _gravityScale, ForceMode.Acceleration);
         }
     }
 
@@ -136,13 +106,37 @@ public class PlayerController : BaseController
             }
         }
     }
+    #endregion
 
+    #region Input
 
+    void UpdateMovemementBasedOnInput()
+    {
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        {
+            SetInput(true);
+        }
+        else
+        {
+            SetInput(false);
+        }
 
-
+    }
     void SetInput(bool m_hasInput)
     {
         _hasInput = m_hasInput;
+    }
+
+    void UpdateJumpBasedOnInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SetJump(true);
+        }
+        else
+        {
+            SetJump(false);
+        }
     }
 
     void SetJump(bool m_hasJump)
@@ -150,6 +144,28 @@ public class PlayerController : BaseController
         _hasJumped = m_hasJump;
     }
 
+    void UpdateRotationAxisBasedOnInput()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            currentRotationAxis = RotationAxis.Forward;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            currentRotationAxis = RotationAxis.Backward;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            currentRotationAxis = RotationAxis.Left;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            currentRotationAxis = RotationAxis.Right;
+        }
+    }
+    #endregion
+
+    #region Debug
     private void OnDrawGizmos()
     {
         if (_planeBeneathHit.collider != null)
@@ -157,16 +173,24 @@ public class PlayerController : BaseController
             Gizmos.color = Color.black;
             Gizmos.DrawRay(_planeBeneathHit.point, _planeBeneathHit.normal);
 
+            Gizmos.DrawLine(transform.position, transform.position + LastMoveDir);
             Gizmos.color = Color.white;
             Gizmos.DrawLine(transform.position, (transform.position + MoveDir));
         }
 
-        if(forwardRayCast.collider != null)
+        if (forwardRayCast.collider != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(forwardRayCast.point, forwardRayCast.point + roataitonPiviot.up);
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(forwardRayCast.point, forwardRayCast.point + forwardRayCast.normal);
         }
+        Vector3 surfaceNormal = _planeBeneathHit.normal;
+
+        Vector3 characterRightRelativeToLastMove = Vector3.Cross(surfaceNormal, LastMoveDir).normalized;
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(_planeBeneathHit.point, _planeBeneathHit.point + characterRightRelativeToLastMove);
+
     }
+    #endregion
 }
