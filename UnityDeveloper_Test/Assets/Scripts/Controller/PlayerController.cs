@@ -185,11 +185,6 @@ public class PlayerController : BaseController
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(forwardRayCast.point, forwardRayCast.point + forwardRayCast.normal);
         }
-        Vector3 surfaceNormal = _planeBeneathHit.normal;
-
-        Vector3 characterRightRelativeToLastMove = Vector3.Cross(surfaceNormal, LastMoveDir).normalized;
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(_planeBeneathHit.point, _planeBeneathHit.point + characterRightRelativeToLastMove);
 
     }
     #endregion
