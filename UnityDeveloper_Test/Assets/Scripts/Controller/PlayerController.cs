@@ -40,6 +40,8 @@ public class PlayerController : BaseController
     public Transform roataitonPiviot;
     public RaycastHit leftRayCast, rightRayCast, forwardRayCast, backRayCast;
 
+    [SerializeField] RotationAxis currentRotationAxis;
+    public RotationAxis CurrentRotationAxis { get => currentRotationAxis; set => currentRotationAxis = value; }
 
     private void Awake()
     {
@@ -61,6 +63,22 @@ public class PlayerController : BaseController
 
         if(Input.GetKeyDown(KeyCode.UpArrow))
         {
+            currentRotationAxis = RotationAxis.Forward;
+            SetState(State._switchGravityState);
+        }
+        else if(Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            currentRotationAxis = RotationAxis.Backward;
+            SetState(State._switchGravityState);
+        }
+        else if( Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            currentRotationAxis = RotationAxis.Left;
+            SetState(State._switchGravityState);
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            currentRotationAxis = RotationAxis.Right;
             SetState(State._switchGravityState);
         }
 
@@ -136,12 +154,19 @@ public class PlayerController : BaseController
     {
         if (_planeBeneathHit.collider != null)
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.black;
             Gizmos.DrawRay(_planeBeneathHit.point, _planeBeneathHit.normal);
 
             Gizmos.color = Color.white;
             Gizmos.DrawLine(transform.position, (transform.position + MoveDir));
         }
 
+        if(forwardRayCast.collider != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(forwardRayCast.point, forwardRayCast.point + roataitonPiviot.up);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(forwardRayCast.point, forwardRayCast.point + forwardRayCast.normal);
+        }
     }
 }
