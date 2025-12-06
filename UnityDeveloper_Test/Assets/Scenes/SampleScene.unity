@@ -362,13 +362,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 194506411}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 19.431564, y: 4.1587586, z: 8.617164}
   m_LocalScale: {x: 7.2579, y: 0.09672296, z: 7.2579}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 909295232}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,7 +382,7 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: OrientationCam
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -427,11 +427,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 70
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -455,13 +455,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2164396, y: 0, z: 0, w: 0.97629607}
-  m_LocalPosition: {x: 0, y: 2.2, z: -2.8}
+  m_LocalRotation: {x: 0.17364816, y: -0, z: -0, w: 0.9848078}
+  m_LocalPosition: {x: 0, y: 2.2, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 25, y: 0, z: 0}
+  m_Father: {fileID: 899445263}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1001,15 +1001,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 7268566434224100039, guid: 31a3b44097c43374394012923e33d7b3,
+        type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 330585545}
     - target: {fileID: 7350525026085733087, guid: 31a3b44097c43374394012923e33d7b3,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7350525026085733087, guid: 31a3b44097c43374394012923e33d7b3,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.112
+      value: 2.47
       objectReference: {fileID: 0}
     - target: {fileID: 7350525026085733087, guid: 31a3b44097c43374394012923e33d7b3,
         type: 3}
@@ -1056,6 +1061,95 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31a3b44097c43374394012923e33d7b3, type: 3}
+--- !u!4 &898115827 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3704634388108152884, guid: 31a3b44097c43374394012923e33d7b3,
+    type: 3}
+  m_PrefabInstance: {fileID: 898115826}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &898115828 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7863097048849041690, guid: 31a3b44097c43374394012923e33d7b3,
+    type: 3}
+  m_PrefabInstance: {fileID: 898115826}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &899445262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 899445263}
+  - component: {fileID: 899445264}
+  - component: {fileID: 899445265}
+  m_Layer: 0
+  m_Name: CamOrientation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &899445263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899445262}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 2.47, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 330585546}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &899445264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899445262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcaec8487ef37ff41a5c910b3b3094d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _followTransform: {fileID: 1805156896}
+  _camera: {fileID: 330585545}
+  _defaultCamPosition: {x: 0, y: 2.2, z: -3}
+  _obstacleMask:
+    serializedVersion: 2
+    m_Bits: 65
+  _smoothTime: 0.15
+  _rotationDamping: 50
+  sensitivity: 2
+  _sphereRadius: 0.3
+  _collosingSmothTime: 8
+  _headPoint: {fileID: 898115827}
+  _footPoint: {fileID: 898115828}
+  cameraCollosionOffset: 1
+--- !u!114 &899445265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899445262}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f0de604c39985f45bf9e22e04e690df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  character: {fileID: 1805156896}
+  cameraBoom: {fileID: 330585546}
+  rotationSpeed: 5
+  distance: 3
+  height: 2.2
 --- !u!1 &909295231
 GameObject:
   m_ObjectHideFlags: 0
@@ -1726,6 +1820,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 69276972}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1805156896 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7350525026085733087, guid: 31a3b44097c43374394012923e33d7b3,
+    type: 3}
+  m_PrefabInstance: {fileID: 898115826}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1893096419
 GameObject:
   m_ObjectHideFlags: 0
@@ -1940,7 +2040,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 330585546}
+  - {fileID: 899445263}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 909295232}
